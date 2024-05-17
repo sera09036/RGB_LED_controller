@@ -1,7 +1,7 @@
 #include <IRremote.h>
 #include <FastLED.h>
 
-#define NUM_LEDS 12 //LEDの個数
+#define NUM_LEDS 300 //LEDの個数
 #define controlPin 5 //RGB制御出力ピン
 
 int receiverPin = 9; //IR受診品
@@ -16,7 +16,7 @@ void setup() {
   pinMode(ledPin, OUTPUT);
 
   FastLED.addLeds<WS2812B, controlPin, GRB>(leds, NUM_LEDS);
-  FastLED.setBrightness(8);
+  FastLED.setBrightness(64);
 }
 
 void loop() {
@@ -25,7 +25,7 @@ void loop() {
 
   if (IrReceiver.decode() && val < 254) {
     digitalWrite(ledPin, HIGH);
-    delay(100)
+    delay(100);
 
     IrReceiver.printIRResultShort(&Serial);
 
@@ -131,7 +131,8 @@ void loop() {
         IrReceiver.resume();
       }
 
-    }else if(IrReceiver.decodedIRData.decodedRawData == 0xF764FF00) {
+
+    }else if(IrReceiver.decodedIRData.decodedRawData == 0xE916FF00) {
       IrReceiver.resume();
       int x = 0;
       //単色（ホワイト）
@@ -142,7 +143,7 @@ void loop() {
           }
           FastLED.show();
           delay(100);
-          if (IrReceiver.decode() && IrReceiver.decodedIRData.decodedRawData != 0xF764FF00){
+          if (IrReceiver.decode() && IrReceiver.decodedIRData.decodedRawData != 0xE916FF00){
             x ++;
           }
 
@@ -152,22 +153,85 @@ void loop() {
           }
           FastLED.show();
           delay(100);
-          if (IrReceiver.decode() && IrReceiver.decodedIRData.decodedRawData != 0xF764FF00){
+          if (IrReceiver.decode() && IrReceiver.decodedIRData.decodedRawData != 0xE916FF00){
             x ++;
           }
         }
         IrReceiver.resume();
       }
+
+
     }else if(IrReceiver.decodedIRData.decodedRawData == 0xBA45FF00){
       //消灯
       digitalWrite(ledPin, LOW);
-      delay(100)
+      delay(100);
+
+
+    }else if(IrReceiver.decodedIRData.decodedRawData == 0xF30CFF00) {
+      IrReceiver.resume();
+      int x = 0;
+      //単色（ブルー）
+      while(x < 1){
+        if (analogRead(0) /4 < 253){
+          for (int i = 0; i < NUM_LEDS; i ++) {
+            leds[i] = CRGB::Blue;
+          }
+          FastLED.show();
+          delay(100);
+          if (IrReceiver.decode() && IrReceiver.decodedIRData.decodedRawData != 0xF30CFF00){
+            x ++;
+          }
+
+        }else{
+          for (int i = 0; i <= NUM_LEDS; i ++){
+            leds[i] = CRGB::Black;
+          }
+          FastLED.show();
+          delay(100);
+          if (IrReceiver.decode() && IrReceiver.decodedIRData.decodedRawData != 0xF30CFF00){
+            x ++;
+          }
+        }
+        IrReceiver.resume();
+      }
+
+
+    }else if(IrReceiver.decodedIRData.decodedRawData == 0xE718FF00) {
+      IrReceiver.resume();
+      int x = 0;
+      //単色（ブラウン）
+      while(x < 1){
+        if (analogRead(0) /4 < 253){
+          for (int i = 0; i < NUM_LEDS; i ++) {
+            leds[i] = CRGB::Brown;
+          }
+          FastLED.show();
+          delay(100);
+          if (IrReceiver.decode() && IrReceiver.decodedIRData.decodedRawData != 0xE718FF00){
+            x ++;
+          }
+
+        }else{
+          for (int i = 0; i <= NUM_LEDS; i ++){
+            leds[i] = CRGB::Black;
+          }
+          FastLED.show();
+          delay(100);
+          if (IrReceiver.decode() && IrReceiver.decodedIRData.decodedRawData != 0xE718FF00){
+            x ++;
+          }
+        }
+        IrReceiver.resume();
+      }
+
+
     }
 
   }else if (IrReceiver.decode() && val > 253){
+    //消灯
     if(IrReceiver.decodedIRData.decodedRawData == 0xBA45FF00){
       digitalWrite(ledPin, LOW);
-      delay(100)
+      delay(100);
     }
   }
 
